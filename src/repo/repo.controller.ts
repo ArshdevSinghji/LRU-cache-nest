@@ -4,14 +4,14 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
-  Put,
 } from '@nestjs/common';
 import { RepoService } from './repo.service';
 
 @Controller('data/:type')
-export class RepoController<T> {
+export class RepoController<T extends { id: number }> {
   constructor(private readonly RepositoryService: RepoService<T>) {}
 
   @Post()
@@ -25,21 +25,21 @@ export class RepoController<T> {
   }
 
   @Get(':id')
-  findOne(@Param('type') type: string, @Param('id') id: string) {
-    return this.RepositoryService.findOne(type, +id);
-  }
-
-  @Delete(':id')
-  delete(@Param('type') type: string, @Param('id') id: string) {
-    return this.RepositoryService.delete(type, +id);
+  findOne(@Param('type') type: string, @Param('id', ParseIntPipe) id: number) {
+    return this.RepositoryService.findOne(type, id);
   }
 
   @Patch(':id')
   upsert(
     @Param('type') type: string,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() data: T,
   ) {
-    return this.RepositoryService.upsert(type, +id, data);
+    this.RepositoryService.upsert(type, id, data);
+  }
+
+  @Delete(':id')
+  delete(@Param('type') type: string, @Param('id', ParseIntPipe) id: number) {
+    this.RepositoryService.delete(type, id);
   }
 }
