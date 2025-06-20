@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
@@ -28,21 +29,12 @@ export class RepoController<T> {
     return this.RepositoryService.findOne(type, +id);
   }
 
-  @Put(':id')
-  update(
-    @Param('type') type: string,
-    @Param('id') id: string,
-    @Body() data: Partial<T>,
-  ) {
-    return this.RepositoryService.update(type, +id, data);
-  }
-
   @Delete(':id')
   delete(@Param('type') type: string, @Param('id') id: string) {
     return this.RepositoryService.delete(type, +id);
   }
 
-  @Put(':id/upsert')
+  @Patch(':id')
   upsert(
     @Param('type') type: string,
     @Param('id') id: string,
